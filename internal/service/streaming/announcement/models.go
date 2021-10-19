@@ -9,7 +9,7 @@ var allEntities = []Announcement{
 	{
 		ID: 1,
 		Author: "John Doe",
-		TimePlanned: 1634488911,
+		TimePlanned: time.Now(),
 		Title: "Sample 1",
 		Description: "Sample description",
 		ThumbnailUrl: "example.com",
@@ -17,7 +17,7 @@ var allEntities = []Announcement{
 	{
 		ID: 2,
 		Author: "Jane Doe",
-		TimePlanned: 1634488911,
+		TimePlanned: time.Now(),
 		Title: "Sample 2",
 		Description: "Sample description",
 		ThumbnailUrl: "example.com",
@@ -25,7 +25,7 @@ var allEntities = []Announcement{
 	{
 		ID: 3,
 		Author: "John Doe",
-		TimePlanned: 1634488911,
+		TimePlanned: time.Now(),
 		Title: "Sample 3",
 		Description: "Sample description",
 		ThumbnailUrl: "example.com",
@@ -33,7 +33,7 @@ var allEntities = []Announcement{
 	{
 		ID: 4,
 		Author: "Jane Doe",
-		TimePlanned: 1634488911,
+		TimePlanned: time.Now(),
 		Title: "Sample 4",
 		Description: "Sample description",
 		ThumbnailUrl: "example.com",
@@ -41,7 +41,7 @@ var allEntities = []Announcement{
 	{
 		ID: 5,
 		Author: "John Doe",
-		TimePlanned: 1634488911,
+		TimePlanned: time.Now(),
 		Title: "Sample 5",
 		Description: "Sample description",
 		ThumbnailUrl: "example.com",
@@ -49,7 +49,7 @@ var allEntities = []Announcement{
 	{
 		ID: 6,
 		Author: "Jane Doe",
-		TimePlanned: 1634488911,
+		TimePlanned: time.Now(),
 		Title: "Sample 6",
 		Description: "Sample description",
 		ThumbnailUrl: "example.com",
@@ -57,7 +57,7 @@ var allEntities = []Announcement{
 	{
 		ID: 7,
 		Author: "John Doe",
-		TimePlanned: 1634488911,
+		TimePlanned: time.Now(),
 		Title: "Sample 7",
 		Description: "Sample description",
 		ThumbnailUrl: "example.com",
@@ -65,7 +65,7 @@ var allEntities = []Announcement{
 	{
 		ID: 8,
 		Author: "Jane Doe",
-		TimePlanned: 1634488911,
+		TimePlanned: time.Now(),
 		Title: "Sample 8",
 		Description: "Sample description",
 		ThumbnailUrl: "example.com",
@@ -73,7 +73,7 @@ var allEntities = []Announcement{
 	{
 		ID: 9,
 		Author: "John Doe",
-		TimePlanned: 1634488911,
+		TimePlanned: time.Now(),
 		Title: "Sample 9",
 		Description: "Sample description",
 		ThumbnailUrl: "example.com",
@@ -81,7 +81,7 @@ var allEntities = []Announcement{
 	{
 		ID: 10,
 		Author: "Jane Doe",
-		TimePlanned: 1634488911,
+		TimePlanned: time.Now(),
 		Title: "Sample 10",
 		Description: "Sample description",
 		ThumbnailUrl: "example.com",
@@ -91,20 +91,20 @@ var allEntities = []Announcement{
 type Announcement struct {
 	ID uint64
 	Author string
-	TimePlanned uint64
+	TimePlanned time.Time
 	Title string
 	Description string
 	ThumbnailUrl string
 }
 
 func (a *Announcement) FormattedTime() string {
-	return time.Unix(int64(a.TimePlanned), 0).String()
+	return a.TimePlanned.UTC().Format(time.UnixDate)
 }
 
 func (a *Announcement) String() string {
 	return "ID: " + strconv.FormatUint(a.ID, 10) + "\n" +
 		"Author: " + a.Author + "\n" +
-		"Time: " + a.FormattedTime() + "\n" +
+		"TimePlanned: " + a.FormattedTime() + "\n" +
 		"Title: " + a.Title + "\n" +
 		"Description: " + a.Description + "\n" +
 		"Thumbnail: " + a.ThumbnailUrl

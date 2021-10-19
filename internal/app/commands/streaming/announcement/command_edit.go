@@ -11,7 +11,6 @@ import (
 
 func (c *StreamingAnnouncementCommander) Edit(inputMessage *tgbotapi.Message) {
 	args := strings.SplitN(inputMessage.CommandArguments(), " ", 2)
-	var idx uint64
 	if len(args) != 2 {
 		c.sendEditFormatMessage(inputMessage)
 		return
@@ -24,7 +23,7 @@ func (c *StreamingAnnouncementCommander) Edit(inputMessage *tgbotapi.Message) {
 		return
 	}
 
-	parsedData := AnouncementData{}
+	var parsedData AnouncementData
 	err = json.Unmarshal([]byte(args[1]), &parsedData)
 	if err != nil {
 		log.Printf("StreamingAnnouncementCommander.Edit: "+
@@ -48,7 +47,7 @@ func (c *StreamingAnnouncementCommander) Edit(inputMessage *tgbotapi.Message) {
 			"Failed to update announcement with id: " + strconv.FormatUint(idx, 10),
 		)
 
-		_, err = c.bot.Send(msg)
+		c.SendBotMessage(msg, "Edit")
 		return
 	}
 
@@ -57,10 +56,7 @@ func (c *StreamingAnnouncementCommander) Edit(inputMessage *tgbotapi.Message) {
 		"Announcement with id: " + strconv.FormatUint(idx, 10) + " was updated successfully",
 	)
 
-	_, err = c.bot.Send(msg)
-	if err != nil {
-		log.Printf("StreamingAnnouncementCommander.Edit: error sending reply message to chat - %v", err)
-	}
+	c.SendBotMessage(msg, "Edit")
 }
 
 func (c *StreamingAnnouncementCommander) sendEditFormatMessage(inputMessage *tgbotapi.Message) {
@@ -73,8 +69,6 @@ func (c *StreamingAnnouncementCommander) sendEditFormatMessage(inputMessage *tgb
 			"time_planned(timestamp),\n" +
 			"thumbnail_url(string)",
 	)
-	_, err := c.bot.Send(msg)
-	if err != nil {
-		log.Printf("StreamingAnnouncementCommander.Get: error sending reply message to chat - %v", err)
-	}
+
+	c.SendBotMessage(msg, "Edit")
 }

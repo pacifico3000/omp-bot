@@ -2,7 +2,6 @@ package announcement
 
 import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
-	"log"
 )
 
 func (c *StreamingAnnouncementCommander) Help(inputMessage *tgbotapi.Message) {
@@ -15,8 +14,5 @@ func (c *StreamingAnnouncementCommander) Help(inputMessage *tgbotapi.Message) {
 		"/delete__streaming__announcement - delete announcement",
 	)
 
-	_, err := c.bot.Send(msg)
-	if err != nil {
-		log.Printf("StreamingAnnouncementCommander.Help: error sending reply message to chat - %v", err)
-	}
+	c.SendBotMessage(msg, "Help")
 }

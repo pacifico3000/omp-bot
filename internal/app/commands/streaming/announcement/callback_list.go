@@ -15,19 +15,24 @@ func (c *StreamingAnnouncementCommander) CallbackList(callback *tgbotapi.Callbac
 	parsedData := CallbackListData{}
 	err := json.Unmarshal([]byte(callbackPath.CallbackData), &parsedData)
 	if err != nil {
-		log.Printf("StreamingAnnouncementCommander.CallbackList: "+
-			"error reading json data for type CallbackListData from "+
+		log.Printf("StreamingAnnouncementCommander.CallbackList: " +
+			"error reading json data for type CallbackListData from " +
 			"input string %v - %v", callbackPath.CallbackData, err)
 		return
 	}
 
-	outputMsgText := ""
-	products, _ := c.announcementService.List(uint64(parsedData.Offset), pageLimit)
-	for _, p := range products {
+	var outputMsgText string
+	announcements, err := c.announcementService.List(uint64(parsedData.Offset), pageLimit)
+	if err != nil {
+		log.Printf("StreamingAnnouncement.CallbackList: error getting announcements list - %v", err)
+		return
+	}
+
+	for _, p := range announcements {
 		outputMsgText += p.String()
 		outputMsgText += "\n----------------------\n"
 	}
-	if outputMsgText == "" {
+	if len(announcements) <= 0 {
 		outputMsgText = "No more items :("
 	}
 	msg := tgbotapi.NewMessage(callback.Message.Chat.ID, outputMsgText)
@@ -49,10 +54,16 @@ func (c *StreamingAnnouncementCommander) CallbackList(callback *tgbotapi.Callbac
 		)
 	}
 
-	if len(products) == pageLimit {
-		offsetData, _ := json.Marshal(CallbackListData{
+	if len(announcements) == pageLimit {
+		offsetData, err := json.Marshal(CallbackListData{
 			Offset: parsedData.Offset + 1,
 		})
+		if err != nil {
+			log.Printf("StreamingAnnouncementCommander.CallbackList: " +
+				"error building json data for type CallbackListData")
+			return
+		}
+
 		callbackPath = path.CallbackPath{
 			Domain:       "streaming",
 			Subdomain:    "announcement",
@@ -68,8 +79,5 @@ func (c *StreamingAnnouncementCommander) CallbackList(callback *tgbotapi.Callbac
 		tgbotapi.NewInlineKeyboardRow(buttons...),
 	)
 
-	_, err = c.bot.Send(msg)
-	if err != nil {
-		log.Printf("StreamingAnnouncementCommander.CallbackList: error sending reply message to chat - %v", err)
-	}
+	c.SendBotMessage(msg, "CallbackList")
 }

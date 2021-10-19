@@ -8,18 +8,26 @@ import (
 )
 
 func (c *StreamingAnnouncementCommander) List(inputMessage *tgbotapi.Message) {
-	outputMsgText := ""
-	products, _ := c.announcementService.List(0, pageLimit)
-	for _, p := range products {
+	var outputMsgText string
+	announcements, err := c.announcementService.List(0, pageLimit)
+	if err != nil {
+		log.Printf("StreamingAnnouncement.List: error getting announcements list - %v", err)
+		return
+	}
+	for _, p := range announcements {
 		outputMsgText += p.String()
 		outputMsgText += "\n----------------------\n"
 	}
 
 	msg := tgbotapi.NewMessage(inputMessage.Chat.ID, outputMsgText)
 
-	serializedData, _ := json.Marshal(CallbackListData{
+	serializedData, err := json.Marshal(CallbackListData{
 		Offset: 1,
 	})
+	if err != nil {
+		log.Printf("StreamingAnnouncement.List: error serializing callback data - %v", err)
+		return
+	}
 
 	callbackPath := path.CallbackPath{
 		Domain:       "streaming",
@@ -33,8 +41,5 @@ func (c *StreamingAnnouncementCommander) List(inputMessage *tgbotapi.Message) {
 		),
 	)
 
-	_, err := c.bot.Send(msg)
-	if err != nil {
-		log.Printf("StreamingAnnouncement.List: error sending reply message to chat - %v", err)
-	}
+	c.SendBotMessage(msg, "List")
 }

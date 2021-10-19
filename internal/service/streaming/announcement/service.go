@@ -22,7 +22,7 @@ func NewDummyAnnouncementService() *DummyAnnouncementService {
 }
 
 func (d *DummyAnnouncementService) Describe(announcementID uint64) (*Announcement, error) {
-	var item *Announcement
+	item := new(Announcement)
 	for _, val := range d.Announcements {
 		if val.ID == announcementID {
 			item = &val
@@ -30,13 +30,13 @@ func (d *DummyAnnouncementService) Describe(announcementID uint64) (*Announcemen
 		}
 	}
 	if item == nil {
-		return nil, nil
+		return nil, errors.New("item not found")
 	}
 
 	return item, nil
 }
 
-func (d *DummyAnnouncementService) List(cursor uint64, limit uint64) ([]Announcement, error) {
+func (d *DummyAnnouncementService) List(cursor, limit uint64) ([]Announcement, error) {
 	start := cursor * limit
 	end := start + limit
 	length := uint64(len(d.Announcements))
@@ -56,26 +56,18 @@ func (d *DummyAnnouncementService) Create(announcement Announcement) (uint64, er
 }
 
 func (d *DummyAnnouncementService) Update(announcementID uint64, announcement Announcement) error {
-	var item *Announcement
-	idx := -1
 	for i, val := range d.Announcements {
 		if val.ID == announcementID {
-			idx = i
-			break
+			d.Announcements[i].Author = announcement.Author
+			d.Announcements[i].TimePlanned = announcement.TimePlanned
+			d.Announcements[i].Title = announcement.Title
+			d.Announcements[i].Description = announcement.Description
+			d.Announcements[i].ThumbnailUrl = announcement.ThumbnailUrl
+			return nil
 		}
 	}
-	if idx == -1 {
-		return errors.New("item not found")
-	}
 
-	item = &d.Announcements[idx]
-	item.Author = announcement.Author
-	item.TimePlanned = announcement.TimePlanned
-	item.Title = announcement.Title
-	item.Description = announcement.Description
-	item.ThumbnailUrl = announcement.ThumbnailUrl
-
-	return nil
+	return errors.New("item not found")
 }
 
 func (d *DummyAnnouncementService) Remove(announcementID uint64) (bool, error) {

@@ -17,7 +17,7 @@ func (c *StreamingAnnouncementCommander) New(inputMessage *tgbotapi.Message) {
 		return
 	}
 
-	parsedData := AnouncementData{}
+	var parsedData AnouncementData
 	err := json.Unmarshal([]byte(args), &parsedData)
 	if err != nil {
 		log.Printf("StreamingAnnouncementCommander.New: "+
@@ -40,7 +40,8 @@ func (c *StreamingAnnouncementCommander) New(inputMessage *tgbotapi.Message) {
 			inputMessage.Chat.ID,
 			"Unable to create new announcement",
 		)
-		c.bot.Send(msg)
+
+		c.SendBotMessage(msg, "New")
 		return
 	}
 
@@ -48,7 +49,8 @@ func (c *StreamingAnnouncementCommander) New(inputMessage *tgbotapi.Message) {
 		inputMessage.Chat.ID,
 		"Announcement with id " + strconv.FormatUint(created, 10) + " created successfully",
 	)
-	c.bot.Send(msg)
+
+	c.SendBotMessage(msg, "New")
 }
 
 func (c *StreamingAnnouncementCommander) sendNewFormatMessage(inputMessage *tgbotapi.Message) {
@@ -61,8 +63,6 @@ func (c *StreamingAnnouncementCommander) sendNewFormatMessage(inputMessage *tgbo
 			"time_planned(timestamp),\n" +
 			"thumbnail_url(string)",
 	)
-	_, err := c.bot.Send(msg)
-	if err != nil {
-		log.Printf("StreamingAnnouncementCommander.New: error sending reply message to chat - %v", err)
-	}
+
+	c.SendBotMessage(msg, "New")
 }

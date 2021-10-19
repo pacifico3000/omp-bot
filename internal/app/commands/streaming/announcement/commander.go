@@ -43,3 +43,10 @@ func (c *StreamingAnnouncementCommander) HandleCommand(msg *tgbotapi.Message, co
 	default: c.Default(msg)
 	}
 }
+
+func (c *StreamingAnnouncementCommander) SendBotMessage(msg tgbotapi.Chattable, method string) {
+	_, err := c.bot.Send(msg)
+	if err != nil {
+		log.Printf("StreamingAnnouncementCommander.%s: error sending reply message to chat - %v", method, err)
+	}
+}

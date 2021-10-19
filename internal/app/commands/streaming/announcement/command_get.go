@@ -16,10 +16,7 @@ func (c *StreamingAnnouncementCommander) Get(inputMessage *tgbotapi.Message) {
 			inputMessage.Chat.ID,
 			"Usage: /get__streaming__announcement {announcement index}",
 			)
-		_, err = c.bot.Send(msg)
-		if err != nil {
-			log.Printf("StreamingAnnouncementCommander.Get: error sending reply message to chat - %v", err)
-		}
+		c.SendBotMessage(msg, "Get")
 		return
 	}
 
@@ -30,9 +27,16 @@ func (c *StreamingAnnouncementCommander) Get(inputMessage *tgbotapi.Message) {
 			inputMessage.Chat.ID,
 			"Failed to get announcement with id: " + strconv.Itoa(idx),
 		)
-
-		_, err = c.bot.Send(msg)
+		c.SendBotMessage(msg, "Get")
 		return
+	}
+	if a == nil {
+		log.Printf("fail to get announcement with idx %d: %v", idx, err)
+		msg := tgbotapi.NewMessage(
+			inputMessage.Chat.ID,
+			"No such announcement with id: " + strconv.Itoa(idx),
+		)
+		c.SendBotMessage(msg, "Get")
 	}
 
 	msg := tgbotapi.NewMessage(
@@ -40,8 +44,5 @@ func (c *StreamingAnnouncementCommander) Get(inputMessage *tgbotapi.Message) {
 		a.String(),
 	)
 
-	_, err = c.bot.Send(msg)
-	if err != nil {
-		log.Printf("StreamingAnnouncementCommander.Get: error sending reply message to chat - %v", err)
-	}
+	c.SendBotMessage(msg, "Get")
 }

@@ -16,22 +16,27 @@ func (c *StreamingAnnouncementCommander) Delete(inputMessage *tgbotapi.Message) 
 			inputMessage.Chat.ID,
 			"Usage: /delete__streaming__announcement {announcement index}",
 		)
-		_, err = c.bot.Send(msg)
-		if err != nil {
-			log.Printf("StreamingAnnouncementCommander.Get: error sending reply message to chat - %v", err)
-		}
+		c.SendBotMessage(msg, "Delete")
 		return
 	}
 
 	a, err := c.announcementService.Remove(uint64(idx))
-	if err != nil || !a {
+	if err != nil {
 		log.Printf("fail to remove announcement with idx %d: %v", idx, err)
 		msg := tgbotapi.NewMessage(
 			inputMessage.Chat.ID,
 			"Failed to remove announcement with id: " + strconv.Itoa(idx),
 		)
-
-		_, err = c.bot.Send(msg)
+		c.SendBotMessage(msg, "Delete")
+		return
+	}
+	if !a {
+		log.Printf("fail to remove announcement with idx %d: %v", idx, err)
+		msg := tgbotapi.NewMessage(
+			inputMessage.Chat.ID,
+			"No such announcement with id: " + strconv.Itoa(idx),
+		)
+		c.SendBotMessage(msg, "Delete")
 		return
 	}
 
@@ -40,8 +45,5 @@ func (c *StreamingAnnouncementCommander) Delete(inputMessage *tgbotapi.Message) 
 		"Announcement was removed successfully",
 	)
 
-	_, err = c.bot.Send(msg)
-	if err != nil {
-		log.Printf("StreamingAnnouncementCommander.Get: error sending reply message to chat - %v", err)
-	}
+	c.SendBotMessage(msg, "Delete")
 }
