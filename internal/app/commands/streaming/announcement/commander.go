@@ -52,6 +52,6 @@ func (c *StreamingAnnouncementCommander) SendBotMessage(msg tgbotapi.Chattable, 
 }
 
 func (c *StreamingAnnouncementCommander) SendBotErrorMessage(inputMes *tgbotapi.Message, mes string, method string)  {
-
-
+	msg := tgbotapi.NewMessage(inputMes.Chat.ID, mes)
+	c.SendBotMessage(msg, method)
 }
