@@ -12,31 +12,19 @@ func (c *StreamingAnnouncementCommander) Get(inputMessage *tgbotapi.Message) {
 	idx, err := strconv.Atoi(args)
 	if err != nil {
 		log.Println("wrong args", args)
-		msg := tgbotapi.NewMessage(
-			inputMessage.Chat.ID,
-			"Usage: /get__streaming__announcement {announcement index}",
-			)
-		c.SendBotMessage(msg, "Get")
+		c.SendBotErrorMessage(inputMessage, "Usage: /get__streaming__announcement {announcement index}", "Get")
 		return
 	}
 
 	a, err := c.announcementService.Describe(uint64(idx))
 	if err != nil || a == nil {
 		log.Printf("fail to get announcement with idx %d: %v", idx, err)
-		msg := tgbotapi.NewMessage(
-			inputMessage.Chat.ID,
-			"Failed to get announcement with id: " + strconv.Itoa(idx),
-		)
-		c.SendBotMessage(msg, "Get")
+		c.SendBotErrorMessage(inputMessage, "Failed to get announcement with id: " + strconv.Itoa(idx), "Get")
 		return
 	}
 	if a == nil {
 		log.Printf("fail to get announcement with idx %d: %v", idx, err)
-		msg := tgbotapi.NewMessage(
-			inputMessage.Chat.ID,
-			"No such announcement with id: " + strconv.Itoa(idx),
-		)
-		c.SendBotMessage(msg, "Get")
+		c.SendBotErrorMessage(inputMessage, "No such announcement with id: " + strconv.Itoa(idx), "Get")
 	}
 
 	msg := tgbotapi.NewMessage(

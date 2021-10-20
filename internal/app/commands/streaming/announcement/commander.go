@@ -50,3 +50,8 @@ func (c *StreamingAnnouncementCommander) SendBotMessage(msg tgbotapi.Chattable, 
 		log.Printf("StreamingAnnouncementCommander.%s: error sending reply message to chat - %v", method, err)
 	}
 }
+
+func (c *StreamingAnnouncementCommander) SendBotErrorMessage(inputMes *tgbotapi.Message, mes string, method string)  {
+
+
+}

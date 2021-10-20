@@ -12,31 +12,19 @@ func (c *StreamingAnnouncementCommander) Delete(inputMessage *tgbotapi.Message) 
 	idx, err := strconv.Atoi(args)
 	if err != nil {
 		log.Println("wrong args", args)
-		msg := tgbotapi.NewMessage(
-			inputMessage.Chat.ID,
-			"Usage: /delete__streaming__announcement {announcement index}",
-		)
-		c.SendBotMessage(msg, "Delete")
+		c.SendBotErrorMessage(inputMessage, "Usage: /delete__streaming__announcement {announcement index}", "Delete")
 		return
 	}
 
 	a, err := c.announcementService.Remove(uint64(idx))
 	if err != nil {
 		log.Printf("fail to remove announcement with idx %d: %v", idx, err)
-		msg := tgbotapi.NewMessage(
-			inputMessage.Chat.ID,
-			"Failed to remove announcement with id: " + strconv.Itoa(idx),
-		)
-		c.SendBotMessage(msg, "Delete")
+		c.SendBotErrorMessage(inputMessage, "Failed to remove announcement with id: " + strconv.Itoa(idx), "Delete")
 		return
 	}
 	if !a {
 		log.Printf("fail to remove announcement with idx %d: %v", idx, err)
-		msg := tgbotapi.NewMessage(
-			inputMessage.Chat.ID,
-			"No such announcement with id: " + strconv.Itoa(idx),
-		)
-		c.SendBotMessage(msg, "Delete")
+		c.SendBotErrorMessage(inputMessage, "No such announcement with id: " + strconv.Itoa(idx), "Delete")
 		return
 	}
 

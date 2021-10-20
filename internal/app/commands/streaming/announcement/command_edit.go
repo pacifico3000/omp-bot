@@ -42,12 +42,7 @@ func (c *StreamingAnnouncementCommander) Edit(inputMessage *tgbotapi.Message) {
 	}
 	if c.announcementService.Update(idx, a) != nil {
 		log.Printf("fail to update announcement with idx %d: %v", idx, err)
-		msg := tgbotapi.NewMessage(
-			inputMessage.Chat.ID,
-			"Failed to update announcement with id: " + strconv.FormatUint(idx, 10),
-		)
-
-		c.SendBotMessage(msg, "Edit")
+		c.SendBotErrorMessage(inputMessage, "Failed to update announcement with id: " + strconv.FormatUint(idx, 10), "Edit")
 		return
 	}
 

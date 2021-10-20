@@ -36,12 +36,7 @@ func (c *StreamingAnnouncementCommander) New(inputMessage *tgbotapi.Message) {
 
 	created, err := c.announcementService.Create(newItem)
 	if err != nil {
-		msg := tgbotapi.NewMessage(
-			inputMessage.Chat.ID,
-			"Unable to create new announcement",
-		)
-
-		c.SendBotMessage(msg, "New")
+		c.SendBotErrorMessage(inputMessage, "Unable to create new announcement", "New")
 		return
 	}
 
@@ -49,7 +44,6 @@ func (c *StreamingAnnouncementCommander) New(inputMessage *tgbotapi.Message) {
 		inputMessage.Chat.ID,
 		"Announcement with id " + strconv.FormatUint(created, 10) + " created successfully",
 	)
-
 	c.SendBotMessage(msg, "New")
 }
 
